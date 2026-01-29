@@ -8,6 +8,7 @@ export class AuthService {
     this.client
       .setEndpoint(config.appwriteURL) // Your API Endpoint
       .setProject(config.appwriteProjectId); // Your project ID
+       this.account = new Account(this.client);
   }
   async createAccount({ email, password, name }) {
     const userAcc=await this.account.create(ID.unique(), email, password);
@@ -38,7 +39,7 @@ export class AuthService {
 }
 
 const authService = new AuthService();
-export default AuthService;
+export default authService;
 
 // const client = new Client()
 //   .setEndpoint("https://<REGION>.cloud.appwrite.io/v1") // Your API Endpoint
