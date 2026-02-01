@@ -1,9 +1,11 @@
 import React from "react";
+import { useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../appwrite/auth";
 import { login } from "../store/authSlice";
 import { useDispatch } from "react-redux";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+// SubmitHandler 
 import { Button, Input, Logo } from "./index.js";
 
 const SignUp = () => {
@@ -15,18 +17,27 @@ const SignUp = () => {
   const create = async (data) => {
     seterror("");
     try {
-      const userData = await authService.createAccount(data);
-      if (userData) {
-        const finaluserData = await authService.getCurrentUser();
-        if (finaluserData) {
-          dispatch(login(finaluserData));
-          navigate("/");
-        }
+      //  Create account
+      const user = await authService.createAccount(data);
+      if (!user) return;
+
+      //  Create session (LOGIN IS REQUIRED)
+      await authService.login({
+        email: data.email,
+        password: data.password,
+      });
+
+      //  Get logged-in user
+      const currentUser = await authService.getCurrentUser();
+      if (currentUser) {
+        dispatch(login(currentUser));
+        navigate("/");
       }
     } catch (error) {
       seterror(error.message);
     }
   };
+
 
   return (
     <div className="flex items-center justify-center">

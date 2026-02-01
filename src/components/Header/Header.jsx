@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const authStatus = useSelector((state) => state.auth.status);
+  const authStatus = useSelector((state) => state.auth?.status ?? false);
   const navigate = useNavigate();
   const navItems = [
     {
@@ -34,9 +34,11 @@ const Header = () => {
       active: authStatus,
     },
   ];
-  return;
+  return  (
   <>
     <header className="py-3 shadow bg-gray-500">
+
+              {/* <h3>Logo ahe </h3> */}
       <Container>
         <nav className="flex">
           <div className="mr-4">
@@ -66,7 +68,8 @@ const Header = () => {
         </nav>
       </Container>
     </header>
-  </>;
+    </>
+  )
 };
 
 export default Header;

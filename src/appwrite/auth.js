@@ -1,3 +1,4 @@
+import { loadConfigFromFile } from "vite";
 import config from "../config/config.js";
 import { Client, Account, ID } from "appwrite";
 
@@ -6,34 +7,42 @@ export class AuthService {
   account;
   constructor() {
     this.client
-      .setEndpoint(config.appwriteURL) // Your API Endpoint
-      .setProject(config.appwriteProjectId); // Your project ID
-       this.account = new Account(this.client);
+      .setProject(config.appwriteProjectId) // Your project ID
+      .setEndpoint(config.appwriteURL); // Your API Endpoint
+    this.account = new Account(this.client);
   }
   async createAccount({ email, password, name }) {
-    const userAcc=await this.account.create(ID.unique(), email, password);
-    return userAcc
+    try {
+      const user = await this.account.create(ID.unique(), email, password);
+
+      if (userAcc) {
+        console.log("Acc created Sucess->", userAcc);
+        return userAcc;
+      }
+    } catch (error) {
+      console.log("erro in createAccount ->", error.message);
+    }
+    return null;
   }
-  async login({email,password}) {
+  async login({ email, password }) {
     return await this.account.createEmailPasswordSession(email, password);
-    
   }
 
   async getCurrentUser() {
     try {
       return await this.account.get();
     } catch (error) {
-      console.log(error)
-      throw error;
+      console.log("Appwrite serive :: getCurrentUser :: error", error);
+      return null;
     }
+    // }
   }
 
   async logout() {
     try {
-      await this.account.deleteSessions()
+      await this.account.deleteSessions();
     } catch (error) {
-        console.log(error);
-        throw error;
+      console.log("Appwrite serive :: logout :: error", error);
     }
   }
 }
